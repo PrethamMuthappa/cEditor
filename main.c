@@ -51,7 +51,7 @@ char editorkey(){
 
   int nread;
   char c;
-  while ((nread==read(STDIN_FILENO,&c,1))!= 1) {
+  while ((nread=read(STDIN_FILENO,&c,1))!= 1) {
   if(nread==-1 && errno!=EAGAIN) die("read");
   }
   return c;
@@ -78,12 +78,12 @@ void drawtildelikevim(){
 }
 /*To clear screen abd start the curson from top ("\x1b") */
 void clearscreen(){
-  if(write(STDOUT_FILENO,"\x1b[2j",4)==-1)die("error");
+  if(write(STDOUT_FILENO,"\x1b[2J",4)==-1)die("error");
   if(write(STDOUT_FILENO,"\x1b[H",3)==-1)die("error");
 
   drawtildelikevim();
   
-  write(STDOUT_FILENO,"/x1b[h",3);
+  write(STDOUT_FILENO,"/x1b[H",3);
 }
 
 
