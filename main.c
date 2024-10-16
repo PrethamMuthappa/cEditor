@@ -73,10 +73,6 @@ int main(){
   while (1)
   {
     editorprocess();
-    /* onlt this should go 
-     */
-
-    printf("hellow");
     
   }
   return 0;
