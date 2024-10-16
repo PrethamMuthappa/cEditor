@@ -6,6 +6,7 @@
 #include <errno.h>
 
 
+#define CTRL_KEY(k) ((k) & 0x1f)
 struct termios orignal_attrs;
 
 void die(const char *s){
@@ -42,7 +43,28 @@ void enables(){
    if( tcsetattr(STDIN_FILENO,TCSAFLUSH,&raw)==-1) die("tcsetattr");
 }
 
+/*create a key to read input from keyboard */
 
+char editorkey(){
+
+  int nread;
+  char c;
+  while ((nread==read(STDIN_FILENO,&c,1))!= 1) {
+  if(nread==-1 && errno!=EAGAIN) die("read");
+  }
+  return c;
+}
+
+/*procees this input  */
+
+void editorprocess(){
+  char c=editorkey();
+  switch (c) {
+    case CTRL_KEY('q'):
+    exit(0);
+    break;
+  }
+}
 
 /* MAIN FUNCTION */
 int main(){
@@ -50,20 +72,7 @@ int main(){
 
   while (1)
   {
-    char c ='\0';
-     int rrs=read(STDIN_FILENO, &c,1);
-    if(rrs == -1 && errno != EAGAIN) die("read");
-  if(rrs == 1){
- 
-    if(iscntrl(c)){
-      printf("%d\r\n",c);
-    }
-    else{
-      printf("%d ('%c')\r\n",c,c);
-    }
-
-    if(c=='q') break;
-    }
+    editorprocess();
     
   }
   return 0;
