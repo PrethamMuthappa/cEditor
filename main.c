@@ -10,6 +10,8 @@
 struct termios orignal_attrs;
 
 void die(const char *s){
+ write(STDOUT_FILENO, "\x1b[2J", 4);
+ write(STDOUT_FILENO, "\x1b[H", 3);
  perror(s);
   exit(1);
 }
@@ -61,10 +63,29 @@ void editorprocess(){
   char c=editorkey();
   switch (c) {
     case CTRL_KEY('q'):
+       write(STDOUT_FILENO, "\x1b[2J", 4);
+      write(STDOUT_FILENO, "\x1b[H", 3);
     exit(0);
     break;
   }
 }
+
+/* to draw tilde like vim */
+void drawtildelikevim(){
+  for(int y=0;y<24;y++){
+    write(STDOUT_FILENO,"~\r\n",3);
+  }
+}
+/*To clear screen abd start the curson from top ("\x1b") */
+void clearscreen(){
+  if(write(STDOUT_FILENO,"\x1b[2j",4)==-1)die("error");
+  if(write(STDOUT_FILENO,"\x1b[H",3)==-1)die("error");
+
+  drawtildelikevim();
+  
+  write(STDOUT_FILENO,"/x1b[h",3);
+}
+
 
 /* MAIN FUNCTION */
 int main(){
@@ -72,6 +93,7 @@ int main(){
 
   while (1)
   {
+    clearscreen();
     editorprocess();
     
   }
